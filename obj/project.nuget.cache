@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ZE4efGIuvkpdNodv1WhNe2ViDXLrwlBVx804gMn6+Yx4KDppx72lLftkXysbMXBDsHL+Tjbq+NceCHxF52qapg==",
+  "success": true,
+  "projectFilePath": "D:\\Product\\Technology\\MiMFa DEAL\\MiMFa DEAL - Engine\\MiMFa DEAL - Engine.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\MiMFa\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\MiMFa\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

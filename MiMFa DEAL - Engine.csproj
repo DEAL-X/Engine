@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>MiMFa</RootNamespace>
+    <!-- Use SDK default inclusion of source files to avoid duplicate Compile entries -->
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <Company>MiMFa</Company>
+    <Product>DEAL-X</Product>
+    <Authors>Mohammad Fathi (MiMFa)</Authors>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="README.md" />
+  </ItemGroup>
+
+</Project>
