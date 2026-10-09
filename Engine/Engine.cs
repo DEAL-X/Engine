@@ -19,10 +19,14 @@ namespace MiMFa.Engine
 
         public event LogEventHandler Logged = null;
         public event DependencyEventHandler UsedDependency = null;
+
         public Input Input { get; set; }
         public Output Output { get; set; }
         public ResourceProvider ResourceProvider { get; set; }
         public string SourceDirectory { get; set; } = "Library\\";
+
+        public bool HasSource => !string.IsNullOrWhiteSpace(Input?.Source);
+
 
         public Engine(StageBase[] compileStages, StageBase executeStage, Options options = null, ResourceProvider resourceProvider = null)
         {
