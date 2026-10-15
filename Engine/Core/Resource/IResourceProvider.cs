@@ -13,8 +13,11 @@ namespace MiMFa.Engine.Resource
         string FileName(string path);
         string Extension(string path);
         IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
+        void SetFolderContents(string path, params string[] files);
         string GetFileContents(string path, System.Text.Encoding encoding);
         void SetFileContents(string path, string content);
+        void PrependFileContents(string path, string content);
+        void AppendFileContents(string path, string content);
         void Delete(string path);
     }
 }

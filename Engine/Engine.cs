@@ -36,7 +36,7 @@ namespace MiMFa.Engine
             this.ResourceProvider = resourceProvider ?? new ResourceProvider();
         }
 
-        public Output Compile(Input input)
+        public virtual Output Compile(Input input)
         {
             bool isfirst = Input == null;
             Input = input;
@@ -46,8 +46,7 @@ namespace MiMFa.Engine
             if (isfirst) OnLogged("Compiling is Started", LogStatus.Subject);
             try
             {
-                string source = System.IO.Path.GetFullPath("DEAL.JS");
-                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(source, ".\\DEAL.JS")}", LogStatus.Message);
+                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(SourceDirectory, ".\\")}", LogStatus.Message);
                 foreach (var stage in CompileStages)
                 {
                     sn = stage.GetType().Name;
@@ -72,21 +71,21 @@ namespace MiMFa.Engine
                 if (isfirst) OnLogged("Compiling is Ended", LogStatus.Subject);
             }
         }
-      
-        public object Execute(Input input)
+
+        public virtual object Execute(Input input)
         {
             return Execute(Compile(input));
         }
-        public object Execute(Output output)
+        public virtual object Execute(Output output)
         {
             return Execute(output.Content, output.Source);
         }
-        public IEnumerable<object> Execute(params KeyValuePair<string, string>[] pathScripts)
+        public virtual IEnumerable<object> Execute(params KeyValuePair<string, string>[] pathScripts)
         {
             foreach (var item in pathScripts)
                 yield return Execute(item.Key, item.Value);
         }
-        public object Execute(string script, string path = null)
+        public virtual object Execute(string script, string path = null)
         {
             if (string.IsNullOrWhiteSpace(path)) OnLogged("Executing is Started", LogStatus.Subject);
             else OnLogged("Source: " + path, LogStatus.Info);
@@ -112,9 +111,11 @@ namespace MiMFa.Engine
             if (HasDependency(input.Source)) return false;
             Input inp = Input;
             Output oup = Output;
+            int ec = Output.Errors.Count;
             var o = Execute(input);
             Input = inp;
             Output = oup;
+            if (o == null && Output.Errors.Count > ec) return false;
             Dependencies.Add(input.Source);
             OnUsedDependency(input.Source, o);
             return true;

@@ -14,8 +14,11 @@ namespace MiMFa.Engine.Resource
         public virtual string FileName(string path) => throw new NotSupportedException();
         public virtual string Extension(string path) => throw new NotSupportedException();
         public virtual IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false) => throw new NotSupportedException();
-        public virtual string GetFileContents(string path, System.Text.Encoding encoding) => throw new NotSupportedException();
+        public virtual void SetFolderContents(string path, params string[] files) => throw new NotSupportedException();
+        public virtual string GetFileContents(string path, System.Text.Encoding encoding = null) => throw new NotSupportedException();
         public virtual void SetFileContents(string path, string content) => throw new NotSupportedException();
+        public virtual void PrependFileContents(string path, string content) => throw new NotSupportedException();
+        public virtual void AppendFileContents(string path, string content) => throw new NotSupportedException();
         public virtual void Delete(string path) => throw new NotSupportedException();
     }
 }
