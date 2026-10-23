@@ -1,14 +1,14 @@
 using System;
 
-namespace MiMFa.Engine
+namespace MiMFa.Engine.Put
 {
-    public class Input
+    public abstract class Put
     {
         public string Content { get; set; }
 
         public string Source { get; set; }
 
-        public Input(string content = "", string source = null)
+        public Put(string content = "", string source = null)
         {
             Content = content;
             Source = source;

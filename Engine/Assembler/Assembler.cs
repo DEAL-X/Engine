@@ -1,4 +1,5 @@
 using MiMFa.Engine.Model;
+using MiMFa.Engine.Stage;
 using MiMFa.Engine.Walker;
 using System.Collections.Generic;
 using System.Linq;

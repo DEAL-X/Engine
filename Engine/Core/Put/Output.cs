@@ -3,18 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MiMFa.Engine
+namespace MiMFa.Engine.Put
 {
-    public class Output
+    public class Output : Put
     {
-        public string Content { get; set; }
-        public string Source { get; private set; }
         public List<string> Errors { get; } = new List<string>();
 
-        public Output(string source = null, string content = null)
+        public Output(string content = "", string source = null) : base(content, source)
         {
-            Source = source;
-            Content = content;
         }
 
         public Output Error(string message = "")

@@ -27,31 +27,47 @@ namespace MiMFa.Engine.Resource
 
         public string Combine(params string[] paths) => Path.Combine(paths ?? Array.Empty<string>());
 
-        public bool Exists(string path) => File.Exists(path = Resolve(path)) || Directory.Exists(path);
+        public IResourceEntry Entity(string path)
+        {
+            path = Resolve(path);
+            return new ResourceEntry(Path.GetFileName(path), path, isFile: File.Exists(path), isFolder: Directory.Exists(path));
+        }
+       
+        public bool Exists(string path) => path.Split(Path.GetInvalidPathChars()).Length <=2 && (File.Exists(path = Resolve(path)) || Directory.Exists(path));
 
         public string DirectoryName(string path) => Path.GetDirectoryName(Resolve(path));
-
         public string FileName(string path) => Path.GetFileName(Resolve(path));
-
         public string Extension(string path) => Path.GetExtension(Resolve(path));
-
+      
+        public IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null)
+        {
+            path = Resolve(path);
+            if (File.Exists(path)) yield return GetFileContents(path, encoding);
+            else if (Directory.Exists(path))
+                foreach (var item in GetFolderContents(path, recursive))
+                    if (item.IsFile) yield return GetFileContents(item.Path, encoding);
+                    else if (recursive)
+                        foreach (var c in GetContents(item.Path, recursive))
+                            yield return c;
+        }
         public IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false)
         {
-            var results = new List<IResourceEntry>();
+            var results = new SortedList<string, IResourceEntry>(StringComparer.OrdinalIgnoreCase);
             var root = Resolve(path);
-            if (string.IsNullOrEmpty(root) || !Directory.Exists(root)) return results;
+            if (string.IsNullOrEmpty(root) || !Directory.Exists(root)) return results.Values;
 
             try
             {
-                foreach (var file in Directory.EnumerateFiles(root))
-                    results.Add(new ResourceEntry(Path.GetFileName(file), file, isFile: true, isFolder: false));
-
                 foreach (var dir in Directory.EnumerateDirectories(root))
                 {
-                    results.Add(new ResourceEntry(Path.GetFileName(dir), dir, isFile: false, isFolder: true));
+                    results.Add(dir, new ResourceEntry(Path.GetFileName(dir), dir, isFile: false, isFolder: true));
                     if (recursive)
-                        results.AddRange(GetFolderContents(dir, true));
+                        foreach (var ent in GetFolderContents(dir, true))
+                            results.Add(ent.Path, ent);
                 }
+
+                foreach (var file in Directory.EnumerateFiles(root))
+                    results.Add(file, new ResourceEntry(Path.GetFileName(file), file, isFile: true, isFolder: false));
 
             }
             catch (UnauthorizedAccessException)
@@ -59,7 +75,7 @@ namespace MiMFa.Engine.Resource
                 // Ignore directories we can't access
             }
 
-            return results;
+            return results.Values;
         }
         /// <summary>
         /// To copy or remain files or directories to the directory path and remove all other files and directories

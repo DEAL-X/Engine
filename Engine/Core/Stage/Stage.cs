@@ -1,6 +1,6 @@
 using System;
 
-namespace MiMFa.Engine
+namespace MiMFa.Engine.Stage
 {
     public class Stage : StageBase
     {

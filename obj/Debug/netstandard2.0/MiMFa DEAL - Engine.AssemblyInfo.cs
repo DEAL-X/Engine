@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiMFa")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+532c0fd3f488d5549316a5bf99087cb3bfd18d38")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8800695b1bbe6274f71f581473943ff7943d5036")]
 [assembly: System.Reflection.AssemblyProductAttribute("DEAL-X")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiMFa DEAL - Engine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

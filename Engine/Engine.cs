@@ -1,6 +1,8 @@
 ﻿using MiMFa.Engine;
 using MiMFa.Engine.Core;
+using MiMFa.Engine.Put;
 using MiMFa.Engine.Resource;
+using MiMFa.Engine.Stage;
 using System;
 using System.Collections.Generic;
 
@@ -31,17 +33,30 @@ namespace MiMFa.Engine
         public Engine(StageBase[] compileStages, StageBase executeStage, Options options = null, ResourceProvider resourceProvider = null)
         {
             this.CompileStages = new List<StageBase>(compileStages ?? Array.Empty<StageBase>());
-            this.ExecuteStage = executeStage ?? new Stage((i, c) => i);
+            this.ExecuteStage = executeStage ?? new Stage.Stage((i, c) => i);
             this.Options = options ?? new Options();
             this.ResourceProvider = resourceProvider ?? new ResourceProvider();
         }
 
+        public Input CreateInput(object value = null)
+        {
+            if (value == null) return new Input();
+            if (value is Input)
+                return (Input)value;
+            else if (value is string)
+                if (ResourceProvider.Exists((string)value))
+                    return new Input(ResourceProvider.GetFileContents((string)value), (string)value);
+                else return new Input((string)value);
+            return new Input((string)value);
+        }
+
+        public virtual Output Compile(object value = null) => Compile(CreateInput(value));
         public virtual Output Compile(Input input)
         {
             bool isfirst = Input == null;
             Input = input;
             object data = input.Content;
-            Output = new Output(Input.Source);
+            Output = new Output(null, Input.Source);
             string sn = null;
             if (isfirst) OnLogged("Compiling is Started", LogStatus.Subject);
             try
@@ -72,6 +87,7 @@ namespace MiMFa.Engine
             }
         }
 
+        public virtual object Execute(object value = null) => Execute(CreateInput(value));
         public virtual object Execute(Input input)
         {
             return Execute(Compile(input));
@@ -85,7 +101,7 @@ namespace MiMFa.Engine
             foreach (var item in pathScripts)
                 yield return Execute(item.Key, item.Value);
         }
-        public virtual object Execute(string script, string path = null)
+        public virtual object Execute(string script, string path)
         {
             if (string.IsNullOrWhiteSpace(path)) OnLogged("Executing is Started", LogStatus.Subject);
             else OnLogged("Source: " + path, LogStatus.Info);
@@ -97,7 +113,7 @@ namespace MiMFa.Engine
             {
                 OnLogged($"Could not execute the {(string.IsNullOrWhiteSpace(path) ?"scripts":"\""+ path + "\" file")}! ❌ ", LogStatus.Error);
                 OnLogged(e.Message, LogStatus.Error);
-                Output.Error(e);
+                Output?.Error(e);
                 return null;
             }
             finally
@@ -116,13 +132,13 @@ namespace MiMFa.Engine
             Input = inp;
             Output = oup;
             if (o == null && Output.Errors.Count > ec) return false;
-            Dependencies.Add(input.Source);
+            Dependencies.Add(input.Source?.ToLower());
             OnUsedDependency(input.Source, o);
             return true;
         }
         public virtual bool HasDependency(string source)
         {
-            return Dependencies.Contains(source);
+            return Dependencies.Contains(source?.ToLower());
         }
 
         public void OnUsedDependency(string source, object value = null)

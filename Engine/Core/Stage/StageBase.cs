@@ -1,4 +1,4 @@
-namespace MiMFa.Engine
+namespace MiMFa.Engine.Stage
 {
     public abstract class StageBase
     {

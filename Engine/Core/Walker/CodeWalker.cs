@@ -31,7 +31,6 @@ namespace MiMFa.Engine.Walker
             else column++;
             return ch;
         }
-
         public string WalkProcedure()
         {
             return string.Join("", WalkWhile(c => !string.IsNullOrWhiteSpace(c)));

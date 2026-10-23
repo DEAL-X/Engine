@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MiMFa.Engine.Core;
 using MiMFa.Engine.Model;
+using MiMFa.Engine.Stage;
 using MiMFa.Engine.Walker;
 
 namespace MiMFa.Engine.Tokenizer
