@@ -112,7 +112,9 @@ namespace MiMFa.Engine
             catch (Exception e)
             {
                 OnLogged($"Could not execute the {(string.IsNullOrWhiteSpace(path) ?"scripts":"\""+ path + "\" file")}! ❌ ", LogStatus.Error);
-                OnLogged(e.Message, LogStatus.Error);
+                var p = e.GetType().GetProperty("ErrorDetails");
+                if (p != null) OnLogged((string)p.GetValue(e), LogStatus.Error);
+                else OnLogged(e.Message, LogStatus.Error);
                 Output?.Error(e);
                 return null;
             }

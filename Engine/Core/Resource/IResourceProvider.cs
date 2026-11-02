@@ -11,6 +11,7 @@ namespace MiMFa.Engine.Resource
 
         IResourceEntry Entity(string path);
         bool Exists(string path);
+        string ParentDirectory(string path);
         string DirectoryName(string path);
         string FileName(string path);
         string Extension(string path);

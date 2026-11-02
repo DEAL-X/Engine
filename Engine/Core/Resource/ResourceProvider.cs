@@ -6,40 +6,17 @@ using System.Text;
 
 namespace MiMFa.Engine.Resource
 {
-    public class ResourceProvider : IResourceProvider
+    public class ResourceProvider : ResourceBase
     {
-        public bool IsAbsolute(string path) => Path.IsPathRooted(path);
-
-        public string Normalize(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return path;
-            var p = path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-            try { return Path.GetFullPath(p); } catch { return p; }
-        }
-
-        public string Resolve(string path, string basePath = null)
-        {
-            if (IsAbsolute(path)) return Normalize(path);
-            if (string.IsNullOrEmpty(basePath)) basePath = Directory.GetCurrentDirectory();
-            var combined = Path.Combine(basePath, path);
-            return Normalize(combined);
-        }
-
-        public string Combine(params string[] paths) => Path.Combine(paths ?? Array.Empty<string>());
-
-        public IResourceEntry Entity(string path)
+        public override IResourceEntry Entity(string path)
         {
             path = Resolve(path);
             return new ResourceEntry(Path.GetFileName(path), path, isFile: File.Exists(path), isFolder: Directory.Exists(path));
         }
-       
-        public bool Exists(string path) => path.Split(Path.GetInvalidPathChars()).Length <=2 && (File.Exists(path = Resolve(path)) || Directory.Exists(path));
 
-        public string DirectoryName(string path) => Path.GetDirectoryName(Resolve(path));
-        public string FileName(string path) => Path.GetFileName(Resolve(path));
-        public string Extension(string path) => Path.GetExtension(Resolve(path));
-      
-        public IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null)
+        public override bool Exists(string path) => path.Split(Path.GetInvalidPathChars()).Length <=2 && (File.Exists(path = Resolve(path)) || Directory.Exists(path));
+
+        public override IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null)
         {
             path = Resolve(path);
             if (File.Exists(path)) yield return GetFileContents(path, encoding);
@@ -50,7 +27,7 @@ namespace MiMFa.Engine.Resource
                         foreach (var c in GetContents(item.Path, recursive))
                             yield return c;
         }
-        public IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false)
+        public override IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false)
         {
             var results = new SortedList<string, IResourceEntry>(StringComparer.OrdinalIgnoreCase);
             var root = Resolve(path);
@@ -82,7 +59,7 @@ namespace MiMFa.Engine.Resource
         /// </summary>
         /// <param name="path"></param>
         /// <param name="files"></param>
-        public void SetFolderContents(string path, params string[] files)
+        public override void SetFolderContents(string path, params string[] files)
         {
             path = Resolve(path);
             foreach (var item in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
@@ -98,43 +75,38 @@ namespace MiMFa.Engine.Resource
                 File.Copy(file, dest, true);
             }
         }
-
-        public string GetFileContents(string path, Encoding encoding = null)
+        public override string GetFileContents(string path, Encoding encoding = null)
         {
             var p = Resolve(path);
             if (!File.Exists(p)) return null;
             return File.ReadAllText(p, encoding ?? Encoding.UTF8);
         }
-        public void SetFileContents(string path, string content)
+        public override void SetFileContents(string path, string content)
         {
             path = Resolve(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(path, content ?? string.Empty, Encoding.UTF8);
         }
-        public void PrependFileContents(string path, string content)
+        public override void PrependFileContents(string path, string content)
         {
             path = Resolve(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            File.WriteAllText(path, content ?? string.Empty, Encoding.UTF8);
+            File.WriteAllText(path, (content ?? string.Empty)+ File.ReadAllText(path), Encoding.UTF8);
         }
-
-        public void AppendFileContents(string path, string content)
+        public override void AppendFileContents(string path, string content)
         {
             path = Resolve(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllText(path, content ?? string.Empty, Encoding.UTF8);
         }
-
-        public void Delete(string path)
+        public override void Delete(string path)
         {
             var p = Resolve(path);
             if (File.Exists(p)) File.Delete(p);
             else if (Directory.Exists(p)) Directory.Delete(p, true);
         }
-
-
     }
 }

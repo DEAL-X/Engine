@@ -47,7 +47,7 @@ namespace MiMFa.Engine.Model
 
 
         public bool IsEmpty() => string.IsNullOrEmpty(Value);
-        public bool IsProcedure() => !string.IsNullOrWhiteSpace(Value) && !Is(TokenType.None, TokenType.Comment);
+        public bool IsProcedure() => (!string.IsNullOrWhiteSpace(Value) || Is(TokenType.StringData)) && !Is(TokenType.None, TokenType.Comment);
         
         public double Sameness(string value)
         {
