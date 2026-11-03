@@ -127,9 +127,9 @@ namespace MiMFa.Engine
             }
         }
 
-        public virtual bool UseDependency(Input input)
+        public virtual bool UseDependency(Input input, bool force = false)
         {
-            if (HasDependency(input.Source)) return false;
+            if (!force && HasDependency(input.Source)) return false;
             Input inp = Input;
             Output oup = Output;
             int ec = Output.Errors.Count;
