@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace MiMFa.Engine
 {
-    public class Engine
+    public class Engine : IDisposable
     {
         public IList<StageBase> CompileStages { get; set; }
         public StageBase ExecuteStage { get; set; }
@@ -36,6 +36,9 @@ namespace MiMFa.Engine
             this.ExecuteStage = executeStage ?? new Stage.Stage((i, c) => i);
             this.Options = options ?? new Options();
             this.ResourceProvider = resourceProvider ?? new ResourceProvider();
+        }
+        public virtual void Dispose()
+        {
         }
 
         public Input CreateInput(object value = null)
@@ -151,5 +154,6 @@ namespace MiMFa.Engine
         {
             if (Logged != null) Logged(this, new LogEventArgs(message, status, time));
         }
+
     }
 }
