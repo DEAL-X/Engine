@@ -102,6 +102,7 @@ namespace MiMFa.Engine.Resource
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllText(path, content ?? string.Empty, Encoding.UTF8);
         }
+
         public override void Delete(string path)
         {
             var p = Resolve(path);
