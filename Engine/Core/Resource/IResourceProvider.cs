@@ -23,6 +23,10 @@ namespace MiMFa.Engine.Resource
         void SetFileContents(string path, string content);
         void PrependFileContents(string path, string content);
         void AppendFileContents(string path, string content);
+        void CreateDirectory(string path);
+        void Move(string source, string destination, bool overwrite = false);
+        void Copy(string source, string destination, bool overwrite = false);
+        void Rename(string path, string newName, bool overwrite = false);
         void Delete(string path);
     }
 }
