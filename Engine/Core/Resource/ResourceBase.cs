@@ -8,6 +8,14 @@ namespace MiMFa.Engine.Resource
 {
     public abstract class ResourceBase : IResourceProvider
     {
+        public string RootDirectory { get; set; }
+
+        public ResourceBase(string rootDirectory = null)
+        {
+            RootDirectory = rootDirectory ?? Directory.GetCurrentDirectory();// Path.GetFullPath(".\\");
+            RootDirectory = RootDirectory.TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
+        }
+
         public virtual bool IsAbsolute(string path) => Path.IsPathRooted(path);
 
         public virtual string Normalize(string path)
@@ -20,7 +28,7 @@ namespace MiMFa.Engine.Resource
         public virtual string Resolve(string path, string basePath = null)
         {
             if (IsAbsolute(path)) return Normalize(path);
-            if (string.IsNullOrEmpty(basePath)) basePath = Directory.GetCurrentDirectory();
+            if (string.IsNullOrEmpty(basePath)) basePath = RootDirectory;
             var combined = Path.Combine(basePath, path);
             return Normalize(combined);
         }
@@ -38,6 +46,7 @@ namespace MiMFa.Engine.Resource
         public abstract IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null);
         public abstract IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
         public abstract void SetFolderContents(string path, params string[] files);
+        public abstract bool CreateDirectory(string path);
         public abstract string GetFileContents(string path, System.Text.Encoding encoding = null);
         public abstract void SetFileContents(string path, string content);
         public abstract void PrependFileContents(string path, string content);

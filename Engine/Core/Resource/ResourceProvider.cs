@@ -62,6 +62,7 @@ namespace MiMFa.Engine.Resource
         public override void SetFolderContents(string path, params string[] files)
         {
             path = Resolve(path);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             foreach (var item in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
                 if(!files.Contains(item)) File.Delete(item);
             foreach (var item in Directory.GetDirectories(path, "*", SearchOption.AllDirectories))
@@ -74,6 +75,12 @@ namespace MiMFa.Engine.Resource
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                 File.Copy(file, dest, true);
             }
+        }
+        public override bool CreateDirectory(string path)
+        {
+            path = Resolve(path);
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return Directory.Exists(path);
         }
         public override string GetFileContents(string path, Encoding encoding = null)
         {
@@ -103,11 +110,13 @@ namespace MiMFa.Engine.Resource
             File.AppendAllText(path, content ?? string.Empty, Encoding.UTF8);
         }
 
+
         public override void Delete(string path)
         {
             var p = Resolve(path);
             if (File.Exists(p)) File.Delete(p);
             else if (Directory.Exists(p)) Directory.Delete(p, true);
         }
+
     }
 }
