@@ -51,7 +51,6 @@ namespace MiMFa.Engine.Resource
         public abstract void SetFileContents(string path, string content);
         public abstract void PrependFileContents(string path, string content);
         public abstract void AppendFileContents(string path, string content);
-        public abstract void CreateDirectory(string path);
         public abstract void Move(string source, string destination, bool overwrite = false);
         public abstract void Copy(string source, string destination, bool overwrite = false);
         public abstract void Rename(string path, string newName, bool overwrite = false);
