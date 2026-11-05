@@ -20,6 +20,7 @@ namespace MiMFa.Engine.Resource
         IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
         void SetFolderContents(string path, params string[] files);
         string GetFileContents(string path, System.Text.Encoding encoding);
+        bool CreateDirectory(string path);
         void SetFileContents(string path, string content);
         void PrependFileContents(string path, string content);
         void AppendFileContents(string path, string content);

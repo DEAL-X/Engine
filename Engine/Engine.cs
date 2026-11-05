@@ -5,6 +5,7 @@ using MiMFa.Engine.Resource;
 using MiMFa.Engine.Stage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MiMFa.Engine
 {
@@ -25,7 +26,6 @@ namespace MiMFa.Engine
         public Input Input { get; set; }
         public Output Output { get; set; }
         public ResourceProvider ResourceProvider { get; set; }
-        public string ResourceDirectory { get; set; } = "Resource\\";
 
         public bool HasSource => !string.IsNullOrWhiteSpace(Input?.Source);
 
@@ -64,7 +64,7 @@ namespace MiMFa.Engine
             if (isfirst) OnLogged("Compiling is Started", LogStatus.Subject);
             try
             {
-                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(ResourceDirectory, ".\\")}", LogStatus.Message);
+                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(ResourceProvider.RootDirectory, "."+Path.DirectorySeparatorChar)}", LogStatus.Message);
                 foreach (var stage in CompileStages)
                 {
                     sn = stage.GetType().Name;
