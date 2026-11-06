@@ -25,7 +25,7 @@ namespace MiMFa.Engine
 
         public Input Input { get; set; }
         public Output Output { get; set; }
-        public ResourceProvider ResourceProvider { get; set; }
+        public ResourceProvider Resource { get; set; }
 
         public bool HasSource => !string.IsNullOrWhiteSpace(Input?.Source);
 
@@ -35,7 +35,7 @@ namespace MiMFa.Engine
             this.CompileStages = new List<StageBase>(compileStages ?? Array.Empty<StageBase>());
             this.ExecuteStage = executeStage ?? new Stage.Stage((i, c) => i);
             this.Options = options ?? new Options();
-            this.ResourceProvider = resourceProvider ?? new ResourceProvider();
+            this.Resource = resourceProvider ?? new ResourceProvider();
         }
         public virtual void Dispose()
         {
@@ -47,8 +47,8 @@ namespace MiMFa.Engine
             if (value is Input)
                 return (Input)value;
             else if (value is string)
-                if (ResourceProvider.Exists((string)value))
-                    return new Input(ResourceProvider.GetFileContents((string)value), (string)value);
+                if (Resource.Exists((string)value))
+                    return new Input(Resource.GetFileContents((string)value), (string)value);
                 else return new Input((string)value);
             return new Input((string)value);
         }
@@ -64,7 +64,7 @@ namespace MiMFa.Engine
             if (isfirst) OnLogged("Compiling is Started", LogStatus.Subject);
             try
             {
-                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(ResourceProvider.RootDirectory, "."+Path.DirectorySeparatorChar)}", LogStatus.Message);
+                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(Resource.RootDirectory, "."+Path.DirectorySeparatorChar)}", LogStatus.Message);
                 foreach (var stage in CompileStages)
                 {
                     sn = stage.GetType().Name;
