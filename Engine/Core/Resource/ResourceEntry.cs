@@ -2,17 +2,20 @@ namespace MiMFa.Engine.Resource
 {
     public class ResourceEntry : IResourceEntry
     {
-        public string Name { get; }
         public string Path { get; }
         public bool IsFile { get; }
         public bool IsFolder { get; }
+        public string FullName => System.IO.Path.GetFileName(Path);
+        public string Name => System.IO.Path.GetFileNameWithoutExtension(Path);
+        public string Extension => System.IO.Path.GetExtension(Path);
+        public string Directory => System.IO.Path.GetDirectoryName(Path);
+        public string Root => System.IO.Path.GetPathRoot(Path);
 
-        public ResourceEntry(string name, string path, bool isFile, bool isFolder)
+        public ResourceEntry(string path, bool? isFile = null, bool? isFolder = null)
         {
-            Name = name;
             Path = path;
-            IsFile = isFile;
-            IsFolder = isFolder;
+            IsFile = isFile?? System.IO.File.Exists(path);
+            IsFolder = isFolder?? System.IO.Directory.Exists(path);
         }
     }
 }

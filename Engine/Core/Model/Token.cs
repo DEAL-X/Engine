@@ -55,5 +55,8 @@ namespace MiMFa.Engine.Model
             if (string.Equals(this.Value, value, StringComparison.OrdinalIgnoreCase)) return 0.5;
             return 0.0;
         }
+
+
+        public override string ToString() => Value;
     }
 }

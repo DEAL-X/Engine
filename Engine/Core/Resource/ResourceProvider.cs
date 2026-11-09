@@ -14,7 +14,7 @@ namespace MiMFa.Engine.Resource
         public override IResourceEntry Entity(string path)
         {
             path = Resolve(path);
-            return new ResourceEntry(Path.GetFileName(path), path, isFile: File.Exists(path), isFolder: Directory.Exists(path));
+            return new ResourceEntry(path);
         }
 
         public override bool Exists(string path) =>
@@ -39,13 +39,13 @@ namespace MiMFa.Engine.Resource
             {
                 foreach (var dir in Directory.EnumerateDirectories(root))
                 {
-                    results.Add(dir, new ResourceEntry(Path.GetFileName(dir), dir, isFile: false, isFolder: true));
+                    results.Add(dir, new ResourceEntry(dir, false, true));
                     if (recursive)
                         foreach (var ent in GetFolderContents(dir, true))
                             results.Add(ent.Path, ent);
                 }
                 foreach (var file in Directory.EnumerateFiles(root))
-                    results.Add(file, new ResourceEntry(Path.GetFileName(file), file, isFile: true, isFolder: false));
+                    results.Add(file, new ResourceEntry(file, true, false));
             }
             catch (UnauthorizedAccessException) { }
             return results.Values;

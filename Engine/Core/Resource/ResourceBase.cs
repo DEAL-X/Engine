@@ -8,12 +8,16 @@ namespace MiMFa.Engine.Resource
 {
     public abstract class ResourceBase : IResourceProvider
     {
+        public string DefaultName { get; set; } = "default";
+        public string DirectorySeparator => Path.DirectorySeparatorChar+"";
         public string RootDirectory { get; set; }
+        public string TempDirectory { get; set; }
 
         public ResourceBase(string rootDirectory = null)
         {
             RootDirectory = rootDirectory ?? Directory.GetCurrentDirectory();// Path.GetFullPath(".\\");
             RootDirectory = RootDirectory.TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
+            TempDirectory = RootDirectory + "Temporary" + Path.DirectorySeparatorChar;
         }
 
         public virtual bool IsAbsolute(string path) => Path.IsPathRooted(path);

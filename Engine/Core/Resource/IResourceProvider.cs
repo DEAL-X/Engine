@@ -4,6 +4,10 @@ namespace MiMFa.Engine.Resource
 {
     public interface IResourceProvider
     {
+        string DirectorySeparator { get; }
+        string RootDirectory { get; set; }
+        string TempDirectory { get; set; }
+
         bool IsAbsolute(string path);
         string Normalize(string path);
         string Resolve(string path, string basePath = null);

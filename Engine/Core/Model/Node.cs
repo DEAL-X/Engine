@@ -245,9 +245,10 @@ namespace MiMFa.Engine.Model
             return this;
         }
 
-        public override string ToString()
+        public override string ToString() => ToString(" ");
+        public string ToString(string separator)
         {
-            return string.Join(" ", new[] { Token.Value }.Concat(Children.Select(n => n.ToString())));
+            return string.Join(separator, new[] { Token.Value }.Concat(Children.Select(n => n.ToString())));
         }
     }
 }

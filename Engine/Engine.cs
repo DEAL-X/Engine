@@ -133,11 +133,16 @@ namespace MiMFa.Engine
             Input inp = Input;
             Output oup = Output;
             int ec = Output.Errors.Count;
+            Dependencies.Add(input.Source?.ToLower());
+            int ind = Dependencies.Count - 1;
             var o = Execute(input);
             Input = inp;
             Output = oup;
-            if (o == null && Output.Errors.Count > ec) return false;
-            Dependencies.Add(input.Source?.ToLower());
+            if (o == null && Output.Errors.Count > ec)
+            {
+                Dependencies.RemoveAt(ind);
+                return false;
+            }
             OnUsedDependency(input.Source, o);
             return true;
         }
