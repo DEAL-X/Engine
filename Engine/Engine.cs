@@ -23,9 +23,12 @@ namespace MiMFa.Engine
         public event LogEventHandler Logged = null;
         public event DependencyEventHandler UsedDependency = null;
 
+        public ResourceProvider Resource { get; set; }
         public Input Input { get; set; }
         public Output Output { get; set; }
-        public ResourceProvider Resource { get; set; }
+        public int ErrorsCapacity { get; set; } = 1000;
+        public List<string> Errors { get; } = new List<string>(1000);
+
 
         public bool HasSource => !string.IsNullOrWhiteSpace(Input?.Source);
 
@@ -157,6 +160,8 @@ namespace MiMFa.Engine
         }
         public void OnLogged(string message = "", LogStatus? status = LogStatus.Info, DateTime? time = null)
         {
+            if (status == LogStatus.Error) Errors.Add(message);
+            if (Errors.Count > ErrorsCapacity) Errors.RemoveAt(0);
             if (Logged != null) Logged(this, new LogEventArgs(message, status, time));
         }
 
