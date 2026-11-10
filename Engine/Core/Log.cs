@@ -39,7 +39,19 @@ namespace MiMFa.Engine.Core
 
         public override string ToString()
         {
-            return string.Join("\t", Time.ToString("yyyy/MM/dd HH:mm:ss"), Log);
+            if (Status.HasValue)
+                switch (Status.Value)
+                {
+                    case LogStatus.Error:
+                    case LogStatus.Warning:
+                    case LogStatus.Success:
+                        return string.Join("\t", Time.ToString("yyyy/MM/dd HH:mm:ss"), (Status + ": ").ToUpper() + Log);
+                    case LogStatus.Subject:
+                        return string.Join("\t", Time.ToString("yyyy/MM/dd HH:mm:ss"), (Log+"").ToUpper());
+                    default:
+                        return string.Join("\t", Time.ToString("yyyy/MM/dd HH:mm:ss"), Log);
+                }
+            else return string.Join("\t", Time.ToString("yyyy/MM/dd HH:mm:ss"), Log);
         }
     }
 

@@ -51,10 +51,32 @@ namespace MiMFa.Engine.Resource
         public abstract IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
         public abstract void SetFolderContents(string path, params string[] files);
         public abstract bool CreateDirectory(string path);
-        public abstract string GetFileContents(string path, System.Text.Encoding encoding = null);
-        public abstract void SetFileContents(string path, string content);
-        public abstract void PrependFileContents(string path, string content);
-        public abstract void AppendFileContents(string path, string content);
+
+        public abstract byte[] GetFileContents(string path);
+        public abstract void SetFileContents(string path, byte[] content);
+
+        public abstract string GetFileText(string path, Encoding encoding = null);
+        public abstract void SetFileText(string path, string content, Encoding encoding = null);
+        public abstract void PrependFileText(string path, string content, Encoding encoding = null);
+        public abstract void AppendFileText(string path, string content, Encoding encoding = null);
+
+        public virtual IEnumerable<string> GetFileLines(string path, Encoding encoding = null)
+        {
+            return GetFileText(path, encoding).Split('\n', '\r');
+        }
+        public virtual void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
+        {
+            SetFileText(path, string.Join(Environment.NewLine, lines), encoding);
+        }
+        public virtual void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
+        {
+            PrependFileText(path, string.Join(Environment.NewLine, lines), encoding);
+        }
+        public virtual void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
+        {
+            AppendFileText(path, string.Join(Environment.NewLine, lines), encoding);
+        }
+
         public abstract void Move(string source, string destination, bool overwrite = false);
         public abstract void Copy(string source, string destination, bool overwrite = false);
         public abstract void Rename(string path, string newName, bool overwrite = false);

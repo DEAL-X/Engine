@@ -6,6 +6,7 @@ using MiMFa.Engine.Stage;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MiMFa.Engine
 {
@@ -26,8 +27,14 @@ namespace MiMFa.Engine
         public ResourceProvider Resource { get; set; }
         public Input Input { get; set; }
         public Output Output { get; set; }
-        public int ErrorsCapacity { get; set; } = 1000;
-        public List<string> Errors { get; } = new List<string>(1000);
+
+        public int LogsCapacity { get; set; } = 1000;
+        public List<LogEventArgs> Logs { get; set; } = new List<LogEventArgs>();
+        public IEnumerable<LogEventArgs> Subjects => Logs.Where(l => l.Status == LogStatus.Subject);
+        public IEnumerable<LogEventArgs> Infos => Logs.Where(l => l.Status == LogStatus.Info);
+        public IEnumerable<LogEventArgs> Messages => Logs.Where(l => l.Status == LogStatus.Message);
+        public IEnumerable<LogEventArgs> Warnings => Logs.Where(l => l.Status == LogStatus.Warning);
+        public IEnumerable<LogEventArgs> Errors => Logs.Where(l => l.Status == LogStatus.Error);
 
 
         public bool HasSource => !string.IsNullOrWhiteSpace(Input?.Source);
@@ -51,7 +58,7 @@ namespace MiMFa.Engine
                 return (Input)value;
             else if (value is string)
                 if (Resource.Exists((string)value))
-                    return new Input(Resource.GetFileContents((string)value), (string)value);
+                    return new Input(Resource.GetFileText((string)value), (string)value);
                 else return new Input((string)value);
             return new Input((string)value);
         }
@@ -73,11 +80,12 @@ namespace MiMFa.Engine
                     sn = stage.GetType().Name;
                     if (isfirst) OnLogged($"{sn} stage is checking...", LogStatus.Info);
                     data = stage.Transform(data, this);
-                    if (isfirst) OnLogged($"{sn} stage tasks completed. ✔️ ", LogStatus.Success);
+                    if (isfirst) OnLogged($"{sn} stage tasks completed. ✔️ ", LogStatus.Info);
                     else OnLogged(" .", null);
                 }
                 Output.Content = (data ?? string.Empty).ToString();
-                if (!isfirst) OnLogged(" ✔️ ", null);
+                if (isfirst) OnLogged($"Script compiled successfully! ✔️ ", LogStatus.Success);
+                else OnLogged(" ✔️ ", null);
                 return Output;
             }
             catch (Exception e)
@@ -109,11 +117,15 @@ namespace MiMFa.Engine
         }
         public virtual object Execute(string script, string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) OnLogged("Executing is Started", LogStatus.Subject);
+            bool isfirst = string.IsNullOrWhiteSpace(path);
+            if (isfirst) OnLogged("Executing is Started", LogStatus.Subject);
             else OnLogged("Source: " + path, LogStatus.Info);
             try
             {
-                return ExecuteStage.Transform(script, this);
+                var res = ExecuteStage.Transform(script, this);
+                if (isfirst) OnLogged($"Code executed successfully! ✔️ ", LogStatus.Success);
+                else OnLogged($" ✔️ ", null);
+                return res;
             }
             catch (Exception e)
             {
@@ -160,9 +172,13 @@ namespace MiMFa.Engine
         }
         public void OnLogged(string message = "", LogStatus? status = LogStatus.Info, DateTime? time = null)
         {
-            if (status == LogStatus.Error) Errors.Add(message);
-            if (Errors.Count > ErrorsCapacity) Errors.RemoveAt(0);
-            if (Logged != null) Logged(this, new LogEventArgs(message, status, time));
+            var log = new LogEventArgs(message, status, time);
+            if (log.Status.HasValue)
+            {
+                Logs.Add(log);
+                if (Logs.Count > LogsCapacity) Logs.RemoveAt(0);
+            }
+            if (Logged != null) Logged(this, log);
         }
 
     }
