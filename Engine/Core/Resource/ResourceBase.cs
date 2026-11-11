@@ -76,6 +76,26 @@ namespace MiMFa.Engine.Resource
         {
             AppendFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+
+        public virtual string GetFileLine(string path, int index, Encoding encoding = null)
+        {
+            if (index >= 0)
+            {
+                foreach (var item in GetFileLines(path, encoding))
+                    if (index-- <= 0) return item;
+            }
+            else
+            {
+                foreach (var item in GetFileLines(path, encoding).Reverse())
+                    if (index++ >= 0) return item;
+            }
+            return null;
+        }
+        public virtual void SetFileLine(string path, int index, string line, Encoding encoding = null)
+        {
+            var lines = GetFileLines(path, encoding);
+            SetFileLines(path, lines.Take(index).Concat(new string[] { line }).Concat(lines.Skip(index)), encoding);
+        }
         public virtual void PrependFileLine(string path, string line, Encoding encoding = null)
         {
             PrependFileText(path, line+ Environment.NewLine, encoding);
@@ -89,5 +109,6 @@ namespace MiMFa.Engine.Resource
         public abstract void Copy(string source, string destination, bool overwrite = false);
         public abstract void Rename(string path, string newName, bool overwrite = false);
         public abstract void Delete(string path);
+
     }
 }

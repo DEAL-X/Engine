@@ -121,6 +121,7 @@ namespace MiMFa.Engine.Resource
             if (!File.Exists(p)) return null;
             return File.ReadLines(p, encoding ?? Encoding.UTF8);
         }
+        public void SetFileLines(string path, string[] lines, Encoding encoding = null) => SetFileLines(path, lines.AsEnumerable(), encoding);
         public override void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Resolve(path);
@@ -128,6 +129,7 @@ namespace MiMFa.Engine.Resource
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
+        public void PrependFileLines(string path, string[] lines, Encoding encoding = null) => PrependFileLines(path, lines.AsEnumerable(), encoding);
         public override void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Resolve(path);
@@ -135,6 +137,7 @@ namespace MiMFa.Engine.Resource
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines.Concat(File.Exists(path) ? File.ReadAllLines(path) : new string[0]), encoding ?? Encoding.UTF8);
         }
+        public void AppendFileLines(string path, string[] lines, Encoding encoding = null) => AppendFileLines(path, lines.AsEnumerable(), encoding);
         public override void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Resolve(path);
@@ -142,6 +145,7 @@ namespace MiMFa.Engine.Resource
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
+       
         public override void PrependFileLine(string path, string line, Encoding encoding = null)
         {
             PrependFileLines(path, new string[] { line }, encoding);

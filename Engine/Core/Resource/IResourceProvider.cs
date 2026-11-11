@@ -39,6 +39,9 @@ namespace MiMFa.Engine.Resource
         void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
         void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
         void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
+       
+        string GetFileLine(string path, int index, Encoding encoding = null);
+        void SetFileLine(string path, int index, string line, Encoding encoding = null);
         void PrependFileLine(string path, string line, Encoding encoding = null);
         void AppendFileLine(string path, string line, Encoding encoding = null);
 
