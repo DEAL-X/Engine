@@ -7,4 +7,3 @@ D:\Product\Technology\MiMFa DEAL\MiMFa DEAL - Engine\obj\Debug\netstandard2.0\Mi
 D:\Product\Technology\MiMFa DEAL\MiMFa DEAL - Engine\obj\Debug\netstandard2.0\MiMFa DEAL - Engine.csproj.CoreCompileInputs.cache
 D:\Product\Technology\MiMFa DEAL\MiMFa DEAL - Engine\obj\Debug\netstandard2.0\MiMFa DEAL - Engine.dll
 D:\Product\Technology\MiMFa DEAL\MiMFa DEAL - Engine\obj\Debug\netstandard2.0\MiMFa DEAL - Engine.pdb
-D:\Product\Technology\MiMFa DEAL\MiMFa DEAL - Engine\obj\Debug\netstandard2.0\MiMFa DEAL - Engine.csproj.AssemblyReference.cache

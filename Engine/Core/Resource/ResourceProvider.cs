@@ -142,7 +142,15 @@ namespace MiMFa.Engine.Resource
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
-      
+        public override void PrependFileLine(string path, string line, Encoding encoding = null)
+        {
+            PrependFileLines(path, new string[] { line }, encoding);
+        }
+        public override void AppendFileLine(string path, string line, Encoding encoding = null)
+        {
+            AppendFileLines(path, new string[]{line}, encoding);
+        }
+
         public override void Copy(string source, string destination, bool overwrite = false)
         {
             string from = Resolve(source), to = Resolve(destination);

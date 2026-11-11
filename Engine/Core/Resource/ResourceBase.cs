@@ -66,15 +66,23 @@ namespace MiMFa.Engine.Resource
         }
         public virtual void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            SetFileText(path, string.Join(Environment.NewLine, lines), encoding);
+            SetFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
         public virtual void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            PrependFileText(path, string.Join(Environment.NewLine, lines), encoding);
+            PrependFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
         public virtual void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            AppendFileText(path, string.Join(Environment.NewLine, lines), encoding);
+            AppendFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
+        }
+        public virtual void PrependFileLine(string path, string line, Encoding encoding = null)
+        {
+            PrependFileText(path, line+ Environment.NewLine, encoding);
+        }
+        public virtual void AppendFileLine(string path, string line, Encoding encoding = null)
+        {
+            AppendFileText(path, line + Environment.NewLine, encoding);
         }
 
         public abstract void Move(string source, string destination, bool overwrite = false);
