@@ -27,54 +27,54 @@ namespace MiMFa.Engine.Assembler
         }
         protected virtual Node AssembleNode(Node node, NodeWalker walker)
         {
-            Node latest = null;
+            Node lastNode = null;
             if (node.Is(TokenType.Statement))
-                 latest = AssembleStatementNode(node, walker);
-            if (latest != null) return latest;
+                lastNode = AssembleStatementNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Scope))
-                 latest = AssembleScopeNode(node, walker);
-            if (latest != null) return latest;
+                lastNode = AssembleScopeNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Data))
-                 latest = AssembleDataNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleDataNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Symbol))
-                 latest = AssembleSymbolNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleSymbolNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Keyword))
-                 latest = AssembleKeywordNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleKeywordNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Comment))
-                 latest = AssembleCommentNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleCommentNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Start))
-                 latest = AssembleStartNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleStartNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Prefix))
-                 latest = AssemblePrefixNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssemblePrefixNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Middle))
-                 latest = AssembleMiddleNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleMiddleNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.Suffix))
-                 latest = AssembleSuffixNode(node, walker);
-            if (latest != null) return latest;
+                 lastNode = AssembleSuffixNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.End))
-                latest = AssembleEndNode(node, walker);
-            if (latest != null) return latest;
+                lastNode = AssembleEndNode(node, walker);
+            if (lastNode != null) return lastNode;
 
             if (node.Is(TokenType.None))
-                 latest = node.Update(NodeType.None);
-            if (latest != null) return latest;
+                 lastNode = node.Update(NodeType.None);
+            if (lastNode != null) return lastNode;
 
             return AssembleUnknownNode(node, walker);
         }

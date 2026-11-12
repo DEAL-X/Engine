@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace MiMFa.Engine.Resource
+namespace MiMFa.Core.Resources
 {
     public class ResourceProvider : ResourceBase
     {
@@ -12,16 +12,16 @@ namespace MiMFa.Engine.Resource
 
         public override IResourceEntry Entity(string path)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             return new ResourceEntry(path);
         }
 
         public override bool Exists(string path) =>
-            path != null && (File.Exists(Resolve(path)) || Directory.Exists(Resolve(path)));
+            path != null && (File.Exists(Normalize(path)) || Directory.Exists(Normalize(path)));
 
         public override IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             if (File.Exists(path)) yield return GetFileText(path, encoding);
             else if (Directory.Exists(path))
                 foreach (var item in GetFolderContents(path, recursive))
@@ -31,7 +31,7 @@ namespace MiMFa.Engine.Resource
         public override IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false)
         {
             var results = new SortedList<string, IResourceEntry>(StringComparer.OrdinalIgnoreCase);
-            var root = Resolve(path);
+            var root = Normalize(path);
             if (string.IsNullOrEmpty(root) || !Directory.Exists(root)) return results.Values;
 
             try
@@ -51,7 +51,7 @@ namespace MiMFa.Engine.Resource
         }
         public override void SetFolderContents(string path, params string[] files)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             foreach (var item in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
                 if (!files.Contains(item)) File.Delete(item);
@@ -59,7 +59,7 @@ namespace MiMFa.Engine.Resource
                 if (!files.Contains(item)) Directory.Delete(item, true);
             foreach (var file in files)
             {
-                var dest = Resolve(file, path);
+                var dest = Normalize(file, path);
                 var dir = Path.GetDirectoryName(dest);
                 if (dest.StartsWith(path, PathComparison)) continue;
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -68,20 +68,20 @@ namespace MiMFa.Engine.Resource
         }
         public override bool CreateDirectory(string path)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return Directory.Exists(path);
         }
 
         public override byte[] GetFileContents(string path)
         {
-            var p = Resolve(path);
+            var p = Normalize(path);
             if (!File.Exists(p)) return null;
             return File.ReadAllBytes(p);
         }
         public override void SetFileContents(string path, byte[] content = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllBytes(path, content ?? new byte[0]);
@@ -89,27 +89,27 @@ namespace MiMFa.Engine.Resource
 
         public override string GetFileText(string path, Encoding encoding = null)
         {
-            var p = Resolve(path);
+            var p = Normalize(path);
             if (!File.Exists(p)) return null;
             return File.ReadAllText(p, encoding ?? Encoding.UTF8);
         }
         public override void SetFileText(string path, string content, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(path, content ?? string.Empty, encoding??Encoding.UTF8);
         }
         public override void PrependFileText(string path, string content, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText(path, (content ?? string.Empty) + (File.Exists(path) ? File.ReadAllText(path) : string.Empty), encoding ?? Encoding.UTF8);
         }
         public override void AppendFileText(string path, string content, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllText(path, content ?? string.Empty, encoding ?? Encoding.UTF8);
@@ -117,27 +117,27 @@ namespace MiMFa.Engine.Resource
 
         public override IEnumerable<string> GetFileLines(string path, Encoding encoding = null)
         {
-            var p = Resolve(path);
+            var p = Normalize(path);
             if (!File.Exists(p)) return null;
             return File.ReadLines(p, encoding ?? Encoding.UTF8);
         }
         public override void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
         public override void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines.Concat(File.Exists(path) ? File.ReadAllLines(path) : new string[0]), encoding ?? Encoding.UTF8);
         }
         public override void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
-            path = Resolve(path);
+            path = Normalize(path);
             var dir = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.AppendAllLines(path, lines, encoding ?? Encoding.UTF8);
@@ -154,7 +154,7 @@ namespace MiMFa.Engine.Resource
 
         public override void Copy(string source, string destination, bool overwrite = false)
         {
-            string from = Resolve(source), to = Resolve(destination);
+            string from = Normalize(source), to = Normalize(destination);
             EnsureSource(from);
             EnsureDifferentPaths(from, to);
             EnsureNotChildDestination(from, to);
@@ -177,7 +177,7 @@ namespace MiMFa.Engine.Resource
         }
         public override void Move(string source, string destination, bool overwrite = false)
         {
-            string from = Resolve(source), to = Resolve(destination);
+            string from = Normalize(source), to = Normalize(destination);
             EnsureSource(from);
             EnsureDifferentPaths(from, to);
             EnsureNotChildDestination(from, to);
@@ -211,14 +211,14 @@ namespace MiMFa.Engine.Resource
                 newName.IndexOf('/') >= 0 || newName.IndexOf('\\') >= 0)
                 throw new ArgumentException("A valid file or directory name (not a path) is required.", nameof(newName));
 
-            string from = Resolve(path);
+            string from = Normalize(path);
             EnsureSource(from);
             string parent = Path.GetDirectoryName(from);
             Move(from, Path.Combine(parent, newName), overwrite);
         }
         public override void Delete(string path)
         {
-            var p = Resolve(path);
+            var p = Normalize(path);
             if (File.Exists(p)) File.Delete(p);
             else if (Directory.Exists(p)) Directory.Delete(p, true);
         }

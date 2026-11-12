@@ -1,7 +1,7 @@
-﻿using MiMFa.Engine;
+﻿using MiMFa.Core.Resources;
+using MiMFa.Engine;
 using MiMFa.Engine.Core;
 using MiMFa.Engine.Put;
-using MiMFa.Engine.Resource;
 using MiMFa.Engine.Stage;
 using System;
 using System.Collections.Generic;
@@ -66,15 +66,17 @@ namespace MiMFa.Engine
         public virtual Output Compile(object value = null) => Compile(CreateInput(value));
         public virtual Output Compile(Input input)
         {
+            string root = Resource.CurrentDirectory;
             bool isfirst = Input == null;
             Input = input;
             object data = input.Content;
             Output = new Output(null, Input.Source);
             string sn = null;
             if (isfirst) OnLogged("Compiling is Started", LogStatus.Subject);
+            else if(!string.IsNullOrWhiteSpace(Input.Source)) Resource.CurrentDirectory = Path.GetDirectoryName(Input.Source).TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
             try
             {
-                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(Resource.RootDirectory, "."+Path.DirectorySeparatorChar)}", LogStatus.Message);
+                if (!string.IsNullOrWhiteSpace(Input.Source)) OnLogged($"Compiling the {Input.Source.Replace(Resource.CurrentDirectory, "."+Path.DirectorySeparatorChar)}", LogStatus.Message);
                 foreach (var stage in CompileStages)
                 {
                     sn = stage.GetType().Name;
@@ -98,6 +100,7 @@ namespace MiMFa.Engine
             finally
             {
                 if (isfirst) OnLogged("Compiling is Ended", LogStatus.Subject);
+                else Resource.CurrentDirectory = root;
             }
         }
 
@@ -117,9 +120,14 @@ namespace MiMFa.Engine
         }
         public virtual object Execute(string script, string path)
         {
+            string root = Resource.CurrentDirectory;
             bool isfirst = string.IsNullOrWhiteSpace(path);
             if (isfirst) OnLogged("Executing is Started", LogStatus.Subject);
-            else OnLogged("Source: " + path, LogStatus.Info);
+            else
+            {
+                Resource.CurrentDirectory = Path.GetDirectoryName(path).TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
+                OnLogged("Source: " + path, LogStatus.Info);
+            }
             try
             {
                 var res = ExecuteStage.Transform(script, this);
@@ -138,7 +146,8 @@ namespace MiMFa.Engine
             }
             finally
             {
-                if (string.IsNullOrWhiteSpace(path)) OnLogged("Executing is Ended", LogStatus.Subject);
+                if (isfirst) OnLogged("Executing is Ended", LogStatus.Subject);
+                else Resource.CurrentDirectory = root;
             }
         }
 

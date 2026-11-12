@@ -1,4 +1,4 @@
-namespace MiMFa.Engine.Resource
+namespace MiMFa.Core.Resources
 {
     public class ResourceEntry : IResourceEntry
     {

@@ -9,7 +9,7 @@ namespace MiMFa.Engine.Model
         public Token Token { get; set; }
         public NodeType Type { get; set; }
         public Node Parent { get; protected set; }
-        public string Value => ToString();
+        public string Value => ToString(" ");
 
         protected List<Node> children = new List<Node>();
         public IList<Node> Children

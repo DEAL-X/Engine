@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MiMFa.Engine.Resource
+namespace MiMFa.Core.Resources
 {
     public interface IResourceProvider
     {
         string DirectorySeparator { get; }
 
-        string RootDirectory { get; set; }
+        string CurrentDirectory { get; set; }
         string TempDirectory { get; set; }
 
         bool IsAbsolute(string path);
-        string Normalize(string path);
-        string Resolve(string path, string basePath = null);
+        string Normalize(string path, string basePath = null);
         string Combine(params string[] paths);
 
         IResourceEntry Entity(string path);
