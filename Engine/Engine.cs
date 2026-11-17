@@ -57,7 +57,7 @@ namespace MiMFa.Engine
             if (value is Input)
                 return (Input)value;
             else if (value is string)
-                if (Resource.Exists((string)value))
+                if (!Path.GetInvalidPathChars().Any(v=>((string)value).Contains(v)) && Resource.Exists((string)value))
                     return new Input(Resource.GetFileText((string)value), (string)value);
                 else return new Input((string)value);
             return new Input((string)value);
