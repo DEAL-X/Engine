@@ -27,12 +27,15 @@ namespace MiMFa.Core.Resources
             if (string.IsNullOrEmpty(path)) return path;
             path = path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
             if (IsAbsolute(path)) return Path.GetFullPath(path);
-            if (path.StartsWith(Path.DirectorySeparatorChar + "", StringComparison.Ordinal)) 
+            if (path.StartsWith(Path.DirectorySeparatorChar + "", StringComparison.Ordinal))
                 basePath = Directory.GetDirectoryRoot(CurrentDirectory);
             else if (path.StartsWith(".", StringComparison.Ordinal))
-                basePath = string.IsNullOrEmpty(basePath)? CurrentDirectory: basePath;
-            else if (path.StartsWith("~"+ Path.DirectorySeparatorChar, StringComparison.Ordinal))
+                basePath = string.IsNullOrEmpty(basePath) ? CurrentDirectory : basePath;
+            else if (path.StartsWith("~" + Path.DirectorySeparatorChar, StringComparison.Ordinal))
+            {
+                path = path.Substring(2);
                 basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
             else basePath = Directory.GetCurrentDirectory();
             return Path.GetFullPath(Path.Combine(basePath, path));
         }

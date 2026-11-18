@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MiMFa.Engine
 {
@@ -57,7 +58,7 @@ namespace MiMFa.Engine
             if (value is Input)
                 return (Input)value;
             else if (value is string)
-                if (!Path.GetInvalidPathChars().Any(v=>((string)value).Contains(v)) && Resource.Exists((string)value))
+                if (!string.IsNullOrWhiteSpace((string)value) && !Path.GetInvalidPathChars().Any(v=>((string)value).Contains(v)) && Resource.Exists((string)value))
                     return new Input(Resource.GetFileText((string)value), (string)value);
                 else return new Input((string)value);
             return new Input((string)value);
@@ -151,6 +152,47 @@ namespace MiMFa.Engine
             }
         }
 
+        public virtual float Compare(object value1 = null, object value2 = null, string pattern = @"\w+|\W+", RegexOptions options = RegexOptions.None) => Compare(CreateInput(value1), CreateInput(value2), pattern, options);
+        public virtual float Compare(Input value1 = null, Input value2 = null, string pattern = @"\w+|\W+", RegexOptions options = RegexOptions.None)
+        {
+            var m = new List<string>();
+            foreach (var item in Regex.Matches(value1.Content, pattern, options))
+                m.Add(item + "");
+            value1.Content = string.Join("", m);
+            m.Clear();
+            foreach (var item in Regex.Matches(value2.Content, pattern, options))
+                m.Add(item + "");
+            value2.Content = string.Join("", m);
+            m.Clear();
+            if (value1.Content.Length == 0 || value2.Content.Length == 0) return value1.Content == value2.Content ? 1 : 0;
+            if (value1.Content.Length > value2.Content.Length)
+                return Compare(value2.Content.ToCharArray(), value1.Content.ToCharArray()).Average();
+            else
+                return Compare(value1.Content.ToCharArray(), value2.Content.ToCharArray()).Average();
+        }
+        public virtual IEnumerable<float> Compare<T>(T[] part, T[] whole) where T : IComparable
+        {
+            float m = 1F - 1F * (whole.Length - part.Length) / whole.Length;
+            for (int i = 0; i < part.Length; i++)
+                for (int j = i; j < whole.Length; j++)
+                    if (part[i].Equals(whole[j]))
+                    {
+                        yield return m;
+                        break;
+                    }
+                    else
+                    {
+                        float f = 0F;
+                        for (int k = j + 1; k < whole.Length; k++)
+                            if (part[i].Equals(whole[k]))
+                            {
+                                f = m - (m * (k - j) / (whole.Length - j));
+                                break;
+                            }
+                        yield return f;
+                    }
+        }
+
         public virtual bool UseDependency(Input input, bool force = false)
         {
             if (!force && HasDependency(input.Source)) return false;
@@ -164,7 +206,7 @@ namespace MiMFa.Engine
             Output = oup;
             if (o == null && Output.Errors.Count > ec)
             {
-                Dependencies.RemoveAt(ind);
+                Dependencies.RemoveRange(ind, Dependencies.Count - ind);
                 return false;
             }
             OnUsedDependency(input.Source, o);

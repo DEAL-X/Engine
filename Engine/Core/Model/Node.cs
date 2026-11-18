@@ -25,7 +25,7 @@ namespace MiMFa.Engine.Model
         public AccessType AccessType { get; set; }
         public int Location { get; set; } = -1;
 
-        public int Count => children.Count;
+        public int Count => children.Count(v => !v.IsEmpty());
         public Node ForceFirst
         {
             get => First??new Node();
@@ -107,7 +107,7 @@ namespace MiMFa.Engine.Model
             return condition(this) || Children.Any(n=>n.Has(condition));
         }
 
-        public bool IsEmpty() => Is(NodeType.None, NodeType.Unknown) && Token.Is(TokenType.None, TokenType.Unknown) && Count <= 0 && Token.Is("");
+        public bool IsEmpty() => Is(NodeType.None, NodeType.Unknown) && Token.Is(TokenType.None, TokenType.Unknown) && Count <= 0 && string.IsNullOrEmpty(Token.Value);
         public bool IsProcedure() => !Is(NodeType.None) && Token.IsProcedure();
 
         public Node Add(Node node)

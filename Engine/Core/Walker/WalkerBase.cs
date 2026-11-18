@@ -10,7 +10,7 @@ namespace MiMFa.Engine.Walker
         public string Source { get; private set; }
 
         public T[] Content { get; private set; }
-        public int Index { get; private set; }
+        public int Index { get; set; }
         public int Length => Content.Length;
 
         public T Current => Peek(0);

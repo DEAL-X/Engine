@@ -3,11 +3,11 @@ namespace MiMFa.Engine.Walker
     public interface IWalker<T> where T : class
     {
         string Source { get; }
-        int Index { get; }
         int Length { get; }
         bool IsRunning { get; }
         bool IsEnded { get; }
         T Current { get; }
+        int Index { get; set; }
 
         T Walk();
         T Peek(int offset);
