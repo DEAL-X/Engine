@@ -14,7 +14,7 @@ namespace MiMFa.Core.Resources
         bool IsAbsolute(string path);
         string Normalize(string path, string basePath = null);
         string Combine(params string[] paths);
-        string Combine(params object[] paths);
+        string Combine(object paths);
 
         IResourceEntry Entity(string path);
         bool Exists(string path);
@@ -26,7 +26,7 @@ namespace MiMFa.Core.Resources
         IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null);
         IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
         void SetFolderContents(string path, params string[] files);
-        void SetFolderContents(string path, params object[] files);
+        void SetFolderContents(string path, object files);
         bool CreateDirectory(string path);
 
         byte[] GetFileContents(string path);
