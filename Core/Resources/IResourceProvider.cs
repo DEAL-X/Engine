@@ -51,6 +51,21 @@ namespace MiMFa.Core.Resources
         void PrependFileLine(string path, string line, Encoding encoding = null);
         void AppendFileLine(string path, string line, Encoding encoding = null);
 
+
+        IEnumerable<string> GetContents(string path, bool recursive, object encoding);
+        string GetFileText(string path, object encoding);
+        void SetFileText(string path, string text, object encoding);
+        void PrependFileText(string path, string text, object encoding);
+        void AppendFileText(string path, string text, object encoding);
+        IEnumerable<string> GetFileLines(string path, object encoding);
+        void SetFileLines(string path, object lines, object encoding);
+        void PrependFileLines(string path, object lines, object encoding);
+        void AppendFileLines(string path, object lines, object encoding);
+        string GetFileLine(string path, int index, object encoding);
+        void SetFileLine(string path, int index, string line, object encoding);
+        void PrependFileLine(string path, string line, object encoding);
+        void AppendFileLine(string path, string line, object encoding);
+
         void Move(string source, string destination, bool overwrite = false);
         void Copy(string source, string destination, bool overwrite = false);
         void Rename(string path, string newName, bool overwrite = false);
