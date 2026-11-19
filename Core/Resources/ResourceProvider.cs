@@ -143,6 +143,25 @@ namespace MiMFa.Core.Resources
             File.AppendAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
        
+
+        // Re-expose the script-facing object overloads on the concrete provider.
+        // ClearScript binds against the runtime type, where same-name overrides can
+        // otherwise hide overloads declared only on ResourceBase.
+        public override void SetFolderContents(string path, object files) => base.SetFolderContents(path, files);
+        public override void SetFileContents(string path, object content) => base.SetFileContents(path, content);
+        public override IEnumerable<string> GetContents(string path, bool recursive, object encoding) => base.GetContents(path, recursive, encoding);
+        public override string GetFileText(string path, object encoding) => base.GetFileText(path, encoding);
+        public override void SetFileText(string path, string content, object encoding) => base.SetFileText(path, content, encoding);
+        public override void PrependFileText(string path, string content, object encoding) => base.PrependFileText(path, content, encoding);
+        public override void AppendFileText(string path, string content, object encoding) => base.AppendFileText(path, content, encoding);
+        public override IEnumerable<string> GetFileLines(string path, object encoding) => base.GetFileLines(path, encoding);
+        public override void SetFileLines(string path, object lines, Encoding encoding = null) => base.SetFileLines(path, lines, encoding);
+        public override void SetFileLines(string path, object lines, object encoding) => base.SetFileLines(path, lines, encoding);
+        public override void PrependFileLines(string path, object lines, Encoding encoding = null) => base.PrependFileLines(path, lines, encoding);
+        public override void PrependFileLines(string path, object lines, object encoding) => base.PrependFileLines(path, lines, encoding);
+        public override void AppendFileLines(string path, object lines, Encoding encoding = null) => base.AppendFileLines(path, lines, encoding);
+        public override void AppendFileLines(string path, object lines, object encoding) => base.AppendFileLines(path, lines, encoding);
+
         public override void PrependFileLine(string path, string line, Encoding encoding = null)
         {
             PrependFileLines(path, new string[] { line }, encoding);
