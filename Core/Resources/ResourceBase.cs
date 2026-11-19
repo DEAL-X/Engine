@@ -118,7 +118,9 @@ namespace MiMFa.Core.Resources
         }
         public virtual void SetFileLine(string path, int index, string line, Encoding encoding = null)
         {
-            var lines = GetFileLines(path, encoding);
+            // Materialize the source before rewriting it. ResourceProvider.GetFileLines
+            // uses File.ReadLines, which holds the source file open until enumeration ends.
+            var lines = (GetFileLines(path, encoding) ?? Enumerable.Empty<string>()).ToList();
             SetFileLines(path, lines.Take(index).Concat(new string[] { line }).Concat(lines.Skip(index)), encoding);
         }
         public virtual void PrependFileLine(string path, string line, Encoding encoding = null)
