@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,6 +44,9 @@ namespace MiMFa.Core.Resources
 
         public string Combine(params string[] paths) => Path.Combine(paths ?? Array.Empty<string>());
 
+        /// <summary>Script-friendly overload for JavaScript arrays marshalled by ClearScript as object[].</summary>
+        public string Combine(params object[] paths) => Combine(ToStringArray(paths));
+
         public virtual string ParentDirectory(string path) => Path.GetDirectoryName(Normalize(path));
         public virtual string DirectoryName(string path) => Path.GetDirectoryName(Normalize(path)).Split(Path.DirectorySeparatorChar).Last();
         public virtual string FileName(string path) => Path.GetFileName(Normalize(path));
@@ -53,10 +58,18 @@ namespace MiMFa.Core.Resources
         public abstract IEnumerable<string> GetContents(string path, bool recursive = false, Encoding encoding = null);
         public abstract IEnumerable<IResourceEntry> GetFolderContents(string path, bool recursive = false);
         public abstract void SetFolderContents(string path, params string[] files);
+
+        /// <summary>Accepts JavaScript arrays without requiring a strongly typed string[].</summary>
+        public virtual void SetFolderContents(string path, params object[] files) =>
+            SetFolderContents(path, ToStringArray(files));
         public abstract bool CreateDirectory(string path);
 
         public abstract byte[] GetFileContents(string path);
         public abstract void SetFileContents(string path, byte[] content);
+
+        /// <summary>Accepts JavaScript arrays and converts their elements to bytes inside the host.</summary>
+        public virtual void SetFileContents(string path, object content) =>
+            SetFileContents(path, ToByteArray(content));
 
         public abstract string GetFileText(string path, Encoding encoding = null);
         public abstract void SetFileText(string path, string content, Encoding encoding = null);
@@ -71,14 +84,23 @@ namespace MiMFa.Core.Resources
         {
             SetFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+        /// <summary>Accepts JavaScript arrays marshalled as object[] by ClearScript.</summary>
+        public virtual void SetFileLines(string path, object lines, Encoding encoding = null) =>
+            SetFileLines(path, ToStringArray(lines), encoding);
         public virtual void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             PrependFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+        /// <summary>Accepts JavaScript arrays marshalled as object[] by ClearScript.</summary>
+        public virtual void PrependFileLines(string path, object lines, Encoding encoding = null) =>
+            PrependFileLines(path, ToStringArray(lines), encoding);
         public virtual void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             AppendFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+        /// <summary>Accepts JavaScript arrays marshalled as object[] by ClearScript.</summary>
+        public virtual void AppendFileLines(string path, object lines, Encoding encoding = null) =>
+            AppendFileLines(path, ToStringArray(lines), encoding);
 
         public virtual string GetFileLine(string path, int index, Encoding encoding = null)
         {
@@ -112,6 +134,38 @@ namespace MiMFa.Core.Resources
         public abstract void Copy(string source, string destination, bool overwrite = false);
         public abstract void Rename(string path, string newName, bool overwrite = false);
         public abstract void Delete(string path);
+
+        private static IEnumerable<object> EnumerateValues(object values)
+        {
+            if (values == null) yield break;
+            if (values is string)
+            {
+                yield return values;
+                yield break;
+            }
+            if (values is IEnumerable sequence)
+            {
+                foreach (object value in sequence) yield return value;
+                yield break;
+            }
+            yield return values;
+        }
+
+        private static string[] ToStringArray(object values) =>
+            ToStringArray(EnumerateValues(values));
+
+        private static string[] ToStringArray(IEnumerable<object> values) =>
+            values.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty).ToArray();
+
+        private static byte[] ToByteArray(object values)
+        {
+            if (values == null) return Array.Empty<byte>();
+            if (values is byte[] bytes) return bytes;
+            if (values is string text) return Encoding.UTF8.GetBytes(text);
+            return EnumerateValues(values)
+                .Select(value => Convert.ToByte(value, CultureInfo.InvariantCulture))
+                .ToArray();
+        }
 
     }
 }
