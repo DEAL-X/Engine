@@ -45,7 +45,7 @@ namespace MiMFa.Core.Resources
         public string Combine(params string[] paths) => Path.Combine(paths ?? Array.Empty<string>());
 
         /// <summary>Script-friendly overload for JavaScript arrays marshalled by ClearScript as object[].</summary>
-        public string Combine(params object[] paths) => Combine(ToStringArray(paths));
+        public string Combine(object paths) => Combine(ToStringArray(paths));
 
         public virtual string ParentDirectory(string path) => Path.GetDirectoryName(Normalize(path));
         public virtual string DirectoryName(string path) => Path.GetDirectoryName(Normalize(path)).Split(Path.DirectorySeparatorChar).Last();
@@ -60,7 +60,7 @@ namespace MiMFa.Core.Resources
         public abstract void SetFolderContents(string path, params string[] files);
 
         /// <summary>Accepts JavaScript arrays without requiring a strongly typed string[].</summary>
-        public virtual void SetFolderContents(string path, params object[] files) =>
+        public virtual void SetFolderContents(string path, object files) =>
             SetFolderContents(path, ToStringArray(files));
         public abstract bool CreateDirectory(string path);
 
