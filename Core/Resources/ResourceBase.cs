@@ -135,6 +135,53 @@ namespace MiMFa.Core.Resources
         public abstract void Rename(string path, string newName, bool overwrite = false);
         public abstract void Delete(string path);
 
+
+        // Script-facing encoding overloads. JavaScript may supply an encoding name or
+        // undefined instead of a System.Text.Encoding host object.
+        public virtual IEnumerable<string> GetContents(string path, bool recursive, object encoding) =>
+            GetContents(path, recursive, ToEncoding(encoding));
+        public virtual string GetFileText(string path, object encoding) =>
+            GetFileText(path, ToEncoding(encoding));
+        public virtual void SetFileText(string path, string content, object encoding) =>
+            SetFileText(path, content, ToEncoding(encoding));
+        public virtual void PrependFileText(string path, string content, object encoding) =>
+            PrependFileText(path, content, ToEncoding(encoding));
+        public virtual void AppendFileText(string path, string content, object encoding) =>
+            AppendFileText(path, content, ToEncoding(encoding));
+        public virtual IEnumerable<string> GetFileLines(string path, object encoding) =>
+            GetFileLines(path, ToEncoding(encoding));
+        public virtual void SetFileLines(string path, object lines, object encoding) =>
+            SetFileLines(path, lines, ToEncoding(encoding));
+        public virtual void PrependFileLines(string path, object lines, object encoding) =>
+            PrependFileLines(path, lines, ToEncoding(encoding));
+        public virtual void AppendFileLines(string path, object lines, object encoding) =>
+            AppendFileLines(path, lines, ToEncoding(encoding));
+        public virtual string GetFileLine(string path, int index, object encoding) =>
+            GetFileLine(path, index, ToEncoding(encoding));
+        public virtual void SetFileLine(string path, int index, string line, object encoding) =>
+            SetFileLine(path, index, line, ToEncoding(encoding));
+        public virtual void PrependFileLine(string path, string line, object encoding) =>
+            PrependFileLine(path, line, ToEncoding(encoding));
+        public virtual void AppendFileLine(string path, string line, object encoding) =>
+            AppendFileLine(path, line, ToEncoding(encoding));
+
+        private static Encoding ToEncoding(object encoding)
+        {
+            if (encoding == null) return null;
+            if (encoding is Encoding typedEncoding) return typedEncoding;
+            if (encoding is string name)
+                return string.IsNullOrWhiteSpace(name) ? null : Encoding.GetEncoding(name);
+
+            string runtimeTypeName = encoding.GetType().Name;
+            if (runtimeTypeName == "Undefined" || runtimeTypeName == "VoidResult")
+                return null;
+
+            if (encoding is IConvertible)
+                return Encoding.GetEncoding(Convert.ToInt32(encoding, CultureInfo.InvariantCulture));
+
+            throw new ArgumentException("Encoding must be a System.Text.Encoding, an encoding name, or a code page.", nameof(encoding));
+        }
+
         private static IEnumerable<object> EnumerateValues(object values)
         {
             if (values == null) yield break;
