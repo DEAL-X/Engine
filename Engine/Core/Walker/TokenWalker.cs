@@ -108,7 +108,7 @@ namespace MiMFa.Engine.Walker
             return new Token(TokenType.None);
         }
 
-        public Token WalkToProcedure()
+        public Token WalkProcedure()
         {
             return WalkTo(t => t.IsProcedure());
         }

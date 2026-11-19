@@ -63,14 +63,21 @@ namespace MiMFa.Engine.Model
             AccessType = accessType ?? AccessType.Unknown;
         }
 
-        public Node Update(NodeType? type = null, Token token = null)
-            => Update(token, type);
-        public Node Update(Token token = null, NodeType? type = null, AccessType? accessType = null, int? location = null, IEnumerable<Node> children = null, Node parent = null)
+        public Node Update(TokenType tokenType, NodeType? nodeType = null) => Update(null, tokenType, nodeType);
+        public Node Update(TokenType tokenType, string value, NodeType? nodeType = null) => Update(value, tokenType, nodeType);
+        public Node Update(NodeType type, Token token = null) => Update(token, type);
+        public Node Update(string value, TokenType? tokenType = null, NodeType? nodeType = null, params Node[] children)
+        {
+            Token.Update(tokenType, value);
+            return Update(Token, nodeType, children: children);
+        }
+        public Node Update(int location, NodeType? nodeType = null, AccessType? accessType = null, IEnumerable<Node> children = null, Node parent = null) => Update(Token, nodeType, accessType, location, children, parent);
+        public Node Update(Token token, NodeType? type = null, AccessType? accessType = null, int? location = null, IEnumerable<Node> children = null, Node parent = null)
         {
             Token = token ?? Token;
-            Type = type ?? Type;
             Parent = parent ?? Parent;
             Children = (children ?? Children).ToList();
+            Type = type ?? (Type == NodeType.None && !string.IsNullOrWhiteSpace(Value)? NodeType.Unknown:Type);
             Location = location ?? Location;
             AccessType = accessType ?? AccessType;
             return this;
@@ -108,7 +115,7 @@ namespace MiMFa.Engine.Model
         }
 
         public bool IsEmpty() => Is(NodeType.None, NodeType.Unknown) && Token.Is(TokenType.None, TokenType.Unknown) && Count <= 0 && string.IsNullOrEmpty(Token.Value);
-        public bool IsProcedure() => !Is(NodeType.None) && Token.IsProcedure();
+        public bool IsProcedure() => Token.IsProcedure() || !IsEmpty();
 
         public Node Add(Node node)
         {
