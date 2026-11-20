@@ -123,6 +123,8 @@ namespace MiMFa.Core.Resources
         }
         public override void SetFileLines(string path, string[] lines, Encoding encoding = null)
             => base.SetFileLines(path, lines, encoding);
+        public override void SetFileLines(string path, object[] lines, Encoding encoding = null)
+            => base.SetFileLines(path, lines, encoding);
         public override void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Normalize(path);
@@ -132,6 +134,8 @@ namespace MiMFa.Core.Resources
         }
         public override void PrependFileLines(string path, string[] lines, Encoding encoding = null)
             => base.PrependFileLines(path, lines, encoding);
+        public override void PrependFileLines(string path, object[] lines, Encoding encoding = null)
+            => base.PrependFileLines(path, lines, encoding);
         public override void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Normalize(path);
@@ -140,6 +144,8 @@ namespace MiMFa.Core.Resources
             File.WriteAllLines(path, lines.Concat(File.Exists(path) ? File.ReadAllLines(path) : new string[0]), encoding ?? Encoding.UTF8);
         }
         public override void AppendFileLines(string path, string[] lines, Encoding encoding = null)
+            => base.AppendFileLines(path, lines, encoding);
+        public override void AppendFileLines(string path, object[] lines, Encoding encoding = null)
             => base.AppendFileLines(path, lines, encoding);
         public override void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
