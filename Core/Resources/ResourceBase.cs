@@ -57,6 +57,7 @@ namespace MiMFa.Core.Resources
 
         public abstract byte[] GetFileContents(string path);
         public abstract void SetFileContents(string path, byte[] content);
+        public virtual void SetFileContents(string path, string content) => SetFileContents(path, Encoding.UTF8.GetBytes(content ?? string.Empty));
 
         public abstract string GetFileText(string path, Encoding encoding = null);
         public abstract void SetFileText(string path, string content, Encoding encoding = null);
