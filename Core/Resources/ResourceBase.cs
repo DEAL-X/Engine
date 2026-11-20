@@ -57,6 +57,9 @@ namespace MiMFa.Core.Resources
 
         public abstract byte[] GetFileContents(string path);
         public abstract void SetFileContents(string path, byte[] content);
+        // ClearScript's EnableArrayConversion marshals JavaScript arrays as object[].
+        public virtual void SetFileContents<T>(string path, T[] content)
+            => SetFileContents(path, content?.Select(value => Convert.ToByte(value, System.Globalization.CultureInfo.InvariantCulture)).ToArray());
 
         public abstract string GetFileText(string path, Encoding encoding = null);
         public abstract void SetFileText(string path, string content, Encoding encoding = null);
@@ -67,14 +70,20 @@ namespace MiMFa.Core.Resources
         {
             return GetFileText(path, encoding).Split('\n', '\r');
         }
+        public virtual void SetFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => SetFileLines(path, lines?.Select(line => ReferenceEquals(line, null) ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             SetFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+        public virtual void PrependFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => PrependFileLines(path, lines?.Select(line => ReferenceEquals(line, null) ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             PrependFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
+        public virtual void AppendFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => AppendFileLines(path, lines?.Select(line => ReferenceEquals(line, null) ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             AppendFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);

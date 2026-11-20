@@ -79,6 +79,9 @@ namespace MiMFa.Core.Resources
             if (!File.Exists(p)) return null;
             return File.ReadAllBytes(p);
         }
+        public override void SetFileContents<T>(string path, T[] content)
+            => base.SetFileContents(path, content);
+
         public override void SetFileContents(string path, byte[] content = null)
         {
             path = Normalize(path);
@@ -121,6 +124,8 @@ namespace MiMFa.Core.Resources
             if (!File.Exists(p)) return null;
             return File.ReadLines(p, encoding ?? Encoding.UTF8);
         }
+        public override void SetFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => base.SetFileLines(path, lines, encoding);
         public override void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Normalize(path);
@@ -128,6 +133,8 @@ namespace MiMFa.Core.Resources
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
+        public override void PrependFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => base.PrependFileLines(path, lines, encoding);
         public override void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Normalize(path);
@@ -135,6 +142,8 @@ namespace MiMFa.Core.Resources
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines.Concat(File.Exists(path) ? File.ReadAllLines(path) : new string[0]), encoding ?? Encoding.UTF8);
         }
+        public override void AppendFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => base.AppendFileLines(path, lines, encoding);
         public override void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             path = Normalize(path);

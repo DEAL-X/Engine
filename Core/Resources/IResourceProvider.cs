@@ -28,6 +28,7 @@ namespace MiMFa.Core.Resources
 
         byte[] GetFileContents(string path);
         void SetFileContents(string path, byte[] content);
+        void SetFileContents<T>(string path, T[] content);
 
         string GetFileText(string path, Encoding encoding = null);
         void SetFileText(string path, string text, Encoding encoding = null);
@@ -35,8 +36,11 @@ namespace MiMFa.Core.Resources
         void AppendFileText(string path, string text, Encoding encoding = null);
 
         IEnumerable<string> GetFileLines(string path, Encoding encoding = null);
+        void SetFileLines<T>(string path, T[] lines, Encoding encoding = null);
         void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
+        void PrependFileLines<T>(string path, T[] lines, Encoding encoding = null);
         void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
+        void AppendFileLines<T>(string path, T[] lines, Encoding encoding = null);
         void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null);
        
         string GetFileLine(string path, int index, Encoding encoding = null);
