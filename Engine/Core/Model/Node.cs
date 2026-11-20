@@ -115,7 +115,7 @@ namespace MiMFa.Engine.Model
         }
 
         public bool IsEmpty() => Is(NodeType.None, NodeType.Unknown) && Token.Is(TokenType.None, TokenType.Unknown) && Count <= 0 && string.IsNullOrEmpty(Token.Value);
-        public bool IsProcedure() => Token.IsProcedure() || !IsEmpty();
+        public bool IsProcedure() => Token.IsProcedure();// !IsEmpty();
 
         public Node Add(Node node)
         {

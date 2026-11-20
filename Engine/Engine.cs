@@ -58,13 +58,18 @@ namespace MiMFa.Engine
             if (value is Input)
                 return (Input)value;
             else if (value is string)
-                if (!string.IsNullOrWhiteSpace((string)value) && !Path.GetInvalidPathChars().Any(v=>((string)value).Contains(v)) && Resource.Exists((string)value))
+                if (
+                    !string.IsNullOrWhiteSpace((string)value) &&
+                    !Path.GetInvalidPathChars().Any(v=>((string)value).Contains(v)) &&
+                    Resource.Exists((string)value)
+                )
                     return new Input(Resource.GetFileText((string)value), (string)value);
                 else return new Input((string)value);
             return new Input((string)value);
         }
 
         public virtual Output Compile(object value = null) => Compile(CreateInput(value));
+        public virtual Output Compile(string content, string source) => Compile(new Input(content, source));
         public virtual Output Compile(Input input)
         {
             string root = Resource.CurrentDirectory;
@@ -119,26 +124,26 @@ namespace MiMFa.Engine
             foreach (var item in pathScripts)
                 yield return Execute(item.Key, item.Value);
         }
-        public virtual object Execute(string script, string path)
+        public virtual object Execute(string content, string source)
         {
             string root = Resource.CurrentDirectory;
-            bool isfirst = string.IsNullOrWhiteSpace(path);
+            bool isfirst = string.IsNullOrWhiteSpace(source);
             if (isfirst) OnLogged("Executing is Started", LogStatus.Subject);
             else
             {
-                Resource.CurrentDirectory = Path.GetDirectoryName(path).TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
-                OnLogged("Source: " + path, LogStatus.Info);
+                Resource.CurrentDirectory = Path.GetDirectoryName(source).TrimEnd('/', '\\') + Path.DirectorySeparatorChar;
+                OnLogged("Source: " + source, LogStatus.Info);
             }
             try
             {
-                var res = ExecuteStage.Transform(script, this);
+                var res = ExecuteStage.Transform(content, this);
                 if (isfirst) OnLogged($"Code executed successfully! ✔️ ", LogStatus.Success);
                 else OnLogged($" ✔️ ", null);
                 return res;
             }
             catch (Exception e)
             {
-                OnLogged($"Could not execute the {(string.IsNullOrWhiteSpace(path) ?"scripts":"\""+ path + "\" file")}! ❌ ", LogStatus.Error);
+                OnLogged($"Could not execute the {(string.IsNullOrWhiteSpace(source) ?"scripts":"\""+ source + "\" file")}! ❌ ", LogStatus.Error);
                 var p = e.GetType().GetProperty("ErrorDetails");
                 if (p != null) OnLogged((string)p.GetValue(e), LogStatus.Error);
                 else OnLogged(e.Message, LogStatus.Error);

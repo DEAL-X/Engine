@@ -76,9 +76,9 @@ namespace MiMFa.Engine.Walker
         public IWalker<T> MoveTo(Func<T, bool> aggregator, int count = 1)
         {
             while (count > 0)
-                if (!IsRunning || aggregator(Walk())) count--;
+                if (IsEnded || aggregator(Walk())) count--;
             while (count < 0)
-                if (!IsRunning || --Index > 0) count++;
+                if (!IsRunning || --Index < 0 || aggregator(Current)) count++;
             return this;
         }
 
