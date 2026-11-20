@@ -67,29 +67,20 @@ namespace MiMFa.Core.Resources
         {
             return GetFileText(path, encoding).Split('\n', '\r');
         }
-        public virtual void SetFileLines(string path, string[] lines, Encoding encoding = null)
-            => SetFileLines(path, lines.AsEnumerable(), encoding);
-        // ClearScript's EnableArrayConversion marshals JavaScript arrays as object[], not T[].
-        public virtual void SetFileLines(string path, object[] lines, Encoding encoding = null)
-            => SetFileLines(path, lines?.Select(line => line == null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
+        public virtual void SetFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => SetFileLines(path, lines?.Select(line => line is null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             SetFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
-        public virtual void PrependFileLines(string path, string[] lines, Encoding encoding = null)
-            => PrependFileLines(path, lines.AsEnumerable(), encoding);
-        // ClearScript's EnableArrayConversion marshals JavaScript arrays as object[], not T[].
-        public virtual void PrependFileLines(string path, object[] lines, Encoding encoding = null)
-            => PrependFileLines(path, lines?.Select(line => line == null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
+        public virtual void PrependFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => PrependFileLines(path, lines?.Select(line => line is null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             PrependFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);
         }
-        public virtual void AppendFileLines(string path, string[] lines, Encoding encoding = null)
-            => AppendFileLines(path, lines.AsEnumerable(), encoding);
-        // ClearScript's EnableArrayConversion marshals JavaScript arrays as object[], not T[].
-        public virtual void AppendFileLines(string path, object[] lines, Encoding encoding = null)
-            => AppendFileLines(path, lines?.Select(line => line == null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
+        public virtual void AppendFileLines<T>(string path, T[] lines, Encoding encoding = null)
+            => AppendFileLines(path, lines?.Select(line => line is null ? null : Convert.ToString(line, System.Globalization.CultureInfo.InvariantCulture)), encoding);
         public virtual void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
             AppendFileText(path, string.Join(Environment.NewLine, lines) + Environment.NewLine, encoding);

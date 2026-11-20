@@ -121,9 +121,7 @@ namespace MiMFa.Core.Resources
             if (!File.Exists(p)) return null;
             return File.ReadLines(p, encoding ?? Encoding.UTF8);
         }
-        public override void SetFileLines(string path, string[] lines, Encoding encoding = null)
-            => base.SetFileLines(path, lines, encoding);
-        public override void SetFileLines(string path, object[] lines, Encoding encoding = null)
+        public override void SetFileLines<T>(string path, T[] lines, Encoding encoding = null)
             => base.SetFileLines(path, lines, encoding);
         public override void SetFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
@@ -132,9 +130,7 @@ namespace MiMFa.Core.Resources
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines, encoding ?? Encoding.UTF8);
         }
-        public override void PrependFileLines(string path, string[] lines, Encoding encoding = null)
-            => base.PrependFileLines(path, lines, encoding);
-        public override void PrependFileLines(string path, object[] lines, Encoding encoding = null)
+        public override void PrependFileLines<T>(string path, T[] lines, Encoding encoding = null)
             => base.PrependFileLines(path, lines, encoding);
         public override void PrependFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
@@ -143,9 +139,7 @@ namespace MiMFa.Core.Resources
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllLines(path, lines.Concat(File.Exists(path) ? File.ReadAllLines(path) : new string[0]), encoding ?? Encoding.UTF8);
         }
-        public override void AppendFileLines(string path, string[] lines, Encoding encoding = null)
-            => base.AppendFileLines(path, lines, encoding);
-        public override void AppendFileLines(string path, object[] lines, Encoding encoding = null)
+        public override void AppendFileLines<T>(string path, T[] lines, Encoding encoding = null)
             => base.AppendFileLines(path, lines, encoding);
         public override void AppendFileLines(string path, IEnumerable<string> lines, Encoding encoding = null)
         {
