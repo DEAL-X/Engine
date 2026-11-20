@@ -57,6 +57,9 @@ namespace MiMFa.Core.Resources
 
         public abstract byte[] GetFileContents(string path);
         public abstract void SetFileContents(string path, byte[] content);
+        // ClearScript's EnableArrayConversion marshals JavaScript arrays as object[].
+        public virtual void SetFileContents<T>(string path, T[] content)
+            => SetFileContents(path, content?.Select(value => Convert.ToByte(value, System.Globalization.CultureInfo.InvariantCulture)).ToArray());
 
         public abstract string GetFileText(string path, Encoding encoding = null);
         public abstract void SetFileText(string path, string content, Encoding encoding = null);

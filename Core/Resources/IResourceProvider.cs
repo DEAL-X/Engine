@@ -28,6 +28,7 @@ namespace MiMFa.Core.Resources
 
         byte[] GetFileContents(string path);
         void SetFileContents(string path, byte[] content);
+        void SetFileContents<T>(string path, T[] content);
 
         string GetFileText(string path, Encoding encoding = null);
         void SetFileText(string path, string text, Encoding encoding = null);
