@@ -79,6 +79,8 @@ namespace MiMFa.Core.Resources
             if (!File.Exists(p)) return null;
             return File.ReadAllBytes(p);
         }
+        public override void SetFileContents(string path, string content) => base.SetFileContents(path, content);
+
         public override void SetFileContents(string path, byte[] content = null)
         {
             path = Normalize(path);
